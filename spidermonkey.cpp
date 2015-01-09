@@ -1,4 +1,4 @@
-#include <spidermonkey.h>
+#include "spidermonkey.h"
 
 int fact(int n) {
     if (n <= 1) {

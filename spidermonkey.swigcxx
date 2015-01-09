@@ -1,2 +1,6 @@
 %module spidermonkey
+%{
+    #include "spidermonkey.h"
+%}
+
 %include "spidermonkey.h"
