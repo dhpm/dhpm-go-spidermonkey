@@ -26,7 +26,7 @@ func TestDefinedFunction(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    assert.Equal(t, "hello world", Foo(cx, "gogo()"))
+    assert.Equal(t, "hello world", Foo(cx, "gogo(); 'hello'"))
 }
 
 func TestHello(t *testing.T) {

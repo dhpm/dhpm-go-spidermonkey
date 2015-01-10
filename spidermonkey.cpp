@@ -44,9 +44,10 @@ const char* foo(JSContext *cx, const char *script) {
 
     const char *filename = "noname";
     int lineno = 1;
-    bool ok = JS_EvaluateScript(cx, global, script, strlen(script), filename, lineno, rval.address());
-    if (!ok)
-        return "eval error :(";
+    JSScript *compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
+    if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
+        return "execute error :(";
+    }
 
     JSString *str = rval.toString();
 
