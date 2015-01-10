@@ -1,10 +1,14 @@
 package spidermonkey
 
 import (
-    "fmt"
+    "github.com/stretchr/testify/assert"
     "testing"
 )
 
-func TestExample(t *testing.T) {
-    fmt.Println(Fact(3))
+func TestFoo(t *testing.T) {
+    assert.Equal(t, "hello world", Foo("['hello', 'world'].join(' ')"))
+}
+
+func TestHello(t *testing.T) {
+    assert.Equal(t, ":)", Hello())
 }
