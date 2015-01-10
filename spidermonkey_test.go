@@ -6,7 +6,27 @@ import (
 )
 
 func TestFoo(t *testing.T) {
-    assert.Equal(t, "hello world", Foo("['hello', 'world'].join(' ')"))
+    // defer JS_ShutDown()
+
+    rt := JS_NewRuntime()
+    defer JS_DestroyRuntime(rt)
+
+    cx := JS_NewContext(rt)
+    defer JS_DestroyContext(cx)
+
+    assert.Equal(t, "hello world", Foo(cx, "['hello', 'world'].join(' ')"))
+}
+
+func TestDefinedFunction(t *testing.T) {
+    // defer JS_ShutDown()
+
+    rt := JS_NewRuntime()
+    defer JS_DestroyRuntime(rt)
+
+    cx := JS_NewContext(rt)
+    defer JS_DestroyContext(cx)
+
+    assert.Equal(t, "hello world", Foo(cx, "gogo()"))
 }
 
 func TestHello(t *testing.T) {
