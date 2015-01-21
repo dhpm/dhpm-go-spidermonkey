@@ -5,18 +5,6 @@ import (
     "testing"
 )
 
-func TestFoo(t *testing.T) {
-    // defer JS_ShutDown()
-
-    rt := JS_NewRuntime()
-    defer JS_DestroyRuntime(rt)
-
-    cx := JS_NewContext(rt)
-    defer JS_DestroyContext(cx)
-
-    assert.Equal(t, "hello world", Foo(cx, "['hello', 'world'].join(' ')"))
-}
-
 func TestDefinedFunction(t *testing.T) {
     // defer JS_ShutDown()
 
@@ -26,9 +14,41 @@ func TestDefinedFunction(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    assert.Equal(t, "hello world", Foo(cx, "gogo(); 'hello'"))
+    assert.Equal(t, "hello", Foo(cx, "gogo(); 'hello'"))
 }
 
-func TestHello(t *testing.T) {
-    assert.Equal(t, ":)", Hello())
+func TestException(t *testing.T) {
+    // defer JS_ShutDown()
+
+    rt := JS_NewRuntime()
+    defer JS_DestroyRuntime(rt)
+
+    cx := JS_NewContext(rt)
+    defer JS_DestroyContext(cx)
+
+    assert.Equal(t, "hello", Foo(cx, "throw new Error('test')"))
+}
+
+func TestSyntaxError(t *testing.T) {
+    // defer JS_ShutDown()
+
+    rt := JS_NewRuntime()
+    defer JS_DestroyRuntime(rt)
+
+    cx := JS_NewContext(rt)
+    defer JS_DestroyContext(cx)
+
+    assert.Equal(t, "", Foo(cx, "8==;"))
+}
+
+func TestValidScript(t *testing.T) {
+    // defer JS_ShutDown()
+
+    rt := JS_NewRuntime()
+    defer JS_DestroyRuntime(rt)
+
+    cx := JS_NewContext(rt)
+    defer JS_DestroyContext(cx)
+
+    assert.Equal(t, "hello world", Foo(cx, "['hello', 'world'].join(' ')"))
 }

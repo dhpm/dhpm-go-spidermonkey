@@ -16,7 +16,7 @@ static JSClass global_class = {
 int myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
     printf("GOGO\n");
 
-    return 0;
+    return 1;
 }
 
 JSContext* JS_NewContext(JSRuntime *rt) {
@@ -28,6 +28,7 @@ JSRuntime* JS_NewRuntime() {
 }
 
 void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
+    fprintf(stderr, "E(%d) W(%d)", JSREPORT_IS_EXCEPTION(report->flags), JSREPORT_IS_WARNING(report->flags));
     fprintf(stderr, "%s:%u:%s\n", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
 }
 
@@ -45,8 +46,17 @@ const char* foo(JSContext *cx, const char *script) {
     const char *filename = "noname";
     int lineno = 1;
     JSScript *compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
+
+    if (!compiledScript) {
+        JS_ReportError(cx, "compile error :(");
+
+        return "";
+    }
+
     if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
-        return "execute error :(";
+        JS_ReportError(cx, "execute error :(");
+
+        return "";
     }
 
     JSString *str = rval.toString();
