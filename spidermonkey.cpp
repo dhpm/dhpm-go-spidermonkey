@@ -13,10 +13,13 @@ static JSClass globalClass = {
     JS_ConvertStub
 };
 
-int myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
-    printf("GOGO\n");
+static JSBool myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
+    char *retString = "hello";
+    JSString *jsString = JS_NewStringCopyN(cx, retString, strlen(retString));
 
-    return 1;
+    JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(jsString));
+
+    return JS_TRUE;
 }
 
 JSContext* JS_NewContext(JSRuntime *rt) {
@@ -31,7 +34,7 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
     JSString *jsStackTrace = nullptr;
     jsval v;
 
-    fprintf(stderr, "File: %s Line: %u Message: %s", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
+    fprintf(stderr, "File: %s Line: %u Message: %s\n", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
 
     if (JSREPORT_IS_EXCEPTION(report->flags) && JS_GetPendingException(cx, &v)) {
         JS_ClearPendingException(cx);
@@ -40,9 +43,7 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
         jsStackTrace = JS_ValueToString(cx, v);
     }
     if (jsStackTrace) {
-        fprintf(stderr, "%s", JS_EncodeString(cx, jsStackTrace));
-    } else {
-        fprintf(stderr, "\n");
+        fprintf(stderr, "Stack: %s", JS_EncodeString(cx, jsStackTrace));
     }
 }
 
