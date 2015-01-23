@@ -1,6 +1,6 @@
 #include "spidermonkey.h"
 
-static JSClass global_class = {
+static JSClass globalClass = {
     "global",
     JSCLASS_GLOBAL_FLAGS,
     // [SpiderMonkey 38] Following Stubs are removed. Remove those lines.
@@ -28,14 +28,32 @@ JSRuntime* JS_NewRuntime() {
 }
 
 void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
-    fprintf(stderr, "E(%d) W(%d)", JSREPORT_IS_EXCEPTION(report->flags), JSREPORT_IS_WARNING(report->flags));
-    fprintf(stderr, "%s:%u:%s\n", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
+    JSString *jsStackTrace = nullptr;
+    jsval v;
+
+    fprintf(stderr, "File: %s Line: %u Message: %s", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
+
+    if (JSREPORT_IS_EXCEPTION(report->flags) && JS_GetPendingException(cx, &v)) {
+        JS_ClearPendingException(cx);
+
+        JS_GetProperty(cx, JSVAL_TO_OBJECT(v), "stack", &v);
+        jsStackTrace = JS_ValueToString(cx, v);
+    }
+    if (jsStackTrace) {
+        fprintf(stderr, "%s", JS_EncodeString(cx, jsStackTrace));
+    } else {
+        fprintf(stderr, "\n");
+    }
 }
 
 const char* foo(JSContext *cx, const char *script) {
+    const char *filename;
+    int lineno;
+    JSScript *compiledScript;
+
     JS_SetErrorReporter(cx, reportError);
 
-    JS::RootedObject global(cx, JS_NewGlobalObject(cx, &global_class, nullptr));
+    JS::RootedObject global(cx, JS_NewGlobalObject(cx, &globalClass, nullptr));
     JS::RootedValue rval(cx);
 
     JSAutoCompartment ac(cx, global);
@@ -43,9 +61,9 @@ const char* foo(JSContext *cx, const char *script) {
     JS_InitStandardClasses(cx, global);
     JS_DefineFunction(cx, global, "gogo", myGoGo, 0, 0);
 
-    const char *filename = "noname";
-    int lineno = 1;
-    JSScript *compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
+    filename = "fooscript";
+    lineno = 1;
+    compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
 
     if (!compiledScript) {
         JS_ReportError(cx, "compile error :(");
@@ -59,7 +77,5 @@ const char* foo(JSContext *cx, const char *script) {
         return "";
     }
 
-    JSString *str = rval.toString();
-
-    return JS_EncodeString(cx, str);
+    return JS_EncodeString(cx, rval.toString());
 }
