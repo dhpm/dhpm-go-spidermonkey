@@ -27,7 +27,7 @@ func TestException(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    assert.Equal(t, "", Foo(cx, "throw new Error('test');"))
+    assert.Equal(t, "", Foo(cx, "throw new Error('test')"))
 }
 
 func TestSyntaxError(t *testing.T) {

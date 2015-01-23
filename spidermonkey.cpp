@@ -1,5 +1,10 @@
 #include "spidermonkey.h"
 
+typedef struct Result {
+    char *value;
+    JSErrorReport *report;
+};
+
 static JSClass globalClass = {
     "global",
     JSCLASS_GLOBAL_FLAGS,
@@ -14,7 +19,7 @@ static JSClass globalClass = {
 };
 
 static JSBool myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
-    char *retString = "hello";
+    const char *retString = "hello";
     JSString *jsString = JS_NewStringCopyN(cx, retString, strlen(retString));
 
     JS_SET_RVAL(cx, vp, STRING_TO_JSVAL(jsString));
@@ -43,7 +48,7 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
         jsStackTrace = JS_ValueToString(cx, v);
     }
     if (jsStackTrace) {
-        fprintf(stderr, "Stack: %s", JS_EncodeString(cx, jsStackTrace));
+        fprintf(stderr, "Stack: %s\n", JS_EncodeString(cx, jsStackTrace));
     }
 }
 
@@ -67,13 +72,13 @@ const char* foo(JSContext *cx, const char *script) {
     compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
 
     if (!compiledScript) {
-        JS_ReportError(cx, "compile error :(");
+        // JS_ReportError(cx, "compile error :(");
 
         return "";
     }
 
     if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
-        JS_ReportError(cx, "execute error :(");
+        // JS_ReportError(cx, "execute error :(");
 
         return "";
     }
