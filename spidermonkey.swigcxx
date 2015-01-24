@@ -3,4 +3,5 @@
     #include "spidermonkey.h"
 %}
 
+%include "Result.h"
 %include "spidermonkey.h"

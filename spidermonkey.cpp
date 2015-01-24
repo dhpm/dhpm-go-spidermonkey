@@ -1,10 +1,5 @@
 #include "spidermonkey.h"
 
-typedef struct Result {
-    char *value;
-    JSErrorReport *report;
-};
-
 static JSClass globalClass = {
     "global",
     JSCLASS_GLOBAL_FLAGS,
@@ -18,7 +13,8 @@ static JSClass globalClass = {
     JS_ConvertStub
 };
 
-static JSBool myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
+static JSBool myGoGo(JSContext *cx, unsigned argc, JS::Value *vp)
+{
     const char *retString = "hello";
     JSString *jsString = JS_NewStringCopyN(cx, retString, strlen(retString));
 
@@ -27,15 +23,18 @@ static JSBool myGoGo(JSContext *cx, unsigned argc, JS::Value *vp) {
     return JS_TRUE;
 }
 
-JSContext* JS_NewContext(JSRuntime *rt) {
+JSContext* JS_NewContext(JSRuntime *rt)
+{
     return JS_NewContext(rt, 8192);
 }
 
-JSRuntime* JS_NewRuntime() {
+JSRuntime* JS_NewRuntime()
+{
     return JS_NewRuntime(8L * 1024 * 1024, JS_NO_HELPER_THREADS);
 }
 
-void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
+void reportError(JSContext *cx, const char *message, JSErrorReport *report)
+{
     JSString *jsStackTrace = nullptr;
     jsval v;
 
@@ -52,7 +51,8 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
     }
 }
 
-const char* foo(JSContext *cx, const char *script) {
+Result* foo(JSContext *cx, const char *script)
+{
     const char *filename;
     int lineno;
     JSScript *compiledScript;
@@ -74,14 +74,12 @@ const char* foo(JSContext *cx, const char *script) {
     if (!compiledScript) {
         // JS_ReportError(cx, "compile error :(");
 
-        return "";
+        return new Result("", nullptr);
     }
 
     if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
-        // JS_ReportError(cx, "execute error :(");
-
-        return "";
+        return new Result("", nullptr);
     }
 
-    return JS_EncodeString(cx, rval.toString());
+    return new Result(JS_EncodeString(cx, rval.toString()), nullptr);
 }
