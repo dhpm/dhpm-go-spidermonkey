@@ -11,6 +11,7 @@ class Result
 public:
     const char* GetValue();
     JSErrorReport* GetReport();
+    bool HasReport();
     Result(const char *value, JSErrorReport *report);
 };
 

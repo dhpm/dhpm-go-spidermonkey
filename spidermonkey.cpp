@@ -51,7 +51,7 @@ void reportError(JSContext *cx, const char *message, JSErrorReport *report)
     }
 }
 
-Result* foo(JSContext *cx, const char *script)
+Result* GetFooResult(JSContext *cx, const char *script)
 {
     const char *filename;
     int lineno;

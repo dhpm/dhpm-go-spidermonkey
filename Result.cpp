@@ -10,6 +10,11 @@ JSErrorReport* Result::GetReport()
     return this->report;
 }
 
+bool Result::HasReport()
+{
+    return this->report;
+}
+
 Result::Result(const char *value, JSErrorReport *report)
 {
     this->report = report;

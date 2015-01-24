@@ -3,15 +3,5 @@
     #include "spidermonkey.h"
 %}
 
-%rename(wrapped_foo) foo(JSContext *cx, const char *script);
-
 %include "Result.h"
 %include "spidermonkey.h"
-
-%insert(go_wrapper) %{
-func Foo(cx JSContext, script string) (string, JSErrorReport) {
-    result := Wrapped_foo(cx, script)
-
-    return result.GetValue(), result.GetReport()
-}
-%}
