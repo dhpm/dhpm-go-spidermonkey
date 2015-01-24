@@ -10,6 +10,7 @@ class Result
 
 public:
     const char* GetValue();
+    JSErrorReport* GetReport();
     Result(const char *value, JSErrorReport *report);
 };
 

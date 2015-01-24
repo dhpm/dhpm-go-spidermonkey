@@ -74,11 +74,11 @@ Result* foo(JSContext *cx, const char *script)
     if (!compiledScript) {
         // JS_ReportError(cx, "compile error :(");
 
-        return new Result("", nullptr);
+        return new Result(nullptr, nullptr);
     }
 
     if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
-        return new Result("", nullptr);
+        return new Result(nullptr, nullptr);
     }
 
     return new Result(JS_EncodeString(cx, rval.toString()), nullptr);
