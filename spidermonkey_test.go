@@ -18,7 +18,11 @@ func (suite *GetFooTestSuite) SetupTest() {
     suite.Context = JS_NewContext(suite.Runtime)
 }
 
-func (suite *GetFooTestSuite) TeardownTest() {
+func (suite *GetFooTestSuite) TearDownAllSuite() {
+    JS_ShutDown()
+}
+
+func (suite *GetFooTestSuite) TearDownTest() {
     JS_DestroyContext(suite.Context)
     JS_DestroyRuntime(suite.Runtime)
 }
