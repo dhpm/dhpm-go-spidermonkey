@@ -15,7 +15,7 @@ func TestDefinedFunction(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    val, _ := Bar(cx, "gogo() + ' wrrrld'")
+    val, _ := Foo(cx, "gogo() + ' wrrrld'")
 
     assert.Equal(t, "hello wrrrld", val)
 }
@@ -29,7 +29,7 @@ func TestException(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    val, _ := Bar(cx, "throw new Error('test')")
+    val, _ := Foo(cx, "throw new Error('test')")
 
     assert.Equal(t, "", val)
 }
@@ -43,7 +43,7 @@ func TestSyntaxError(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    val, _ := Bar(cx, "8==;")
+    val, _ := Foo(cx, "8==;")
 
     assert.Equal(t, "", val)
 }
@@ -57,7 +57,7 @@ func TestValidScript(t *testing.T) {
     cx := JS_NewContext(rt)
     defer JS_DestroyContext(cx)
 
-    val, _ := Bar(cx, "['abc', 'def'].join('-')")
+    val, _ := Foo(cx, "['abc', 'def'].join('-')")
 
     assert.Equal(t, "abc-def", val)
 }
