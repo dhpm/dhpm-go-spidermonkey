@@ -38,14 +38,14 @@ func (suite *GetFooTestSuite) TestException() {
     val, err := GetFoo(suite.Context, "throw new Error('test')")
 
     assert.Equal(suite.T(), "", val)
-    assert.Nil(suite.T(), err)
+    assert.NotNil(suite.T(), err)
 }
 
 func (suite *GetFooTestSuite) TestSyntaxError() {
     val, err := GetFoo(suite.Context, "8==;")
 
     assert.Equal(suite.T(), "", val)
-    assert.Nil(suite.T(), err)
+    assert.NotNil(suite.T(), err)
 }
 
 func (suite *GetFooTestSuite) TestValidScript() {
