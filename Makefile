@@ -1,10 +1,5 @@
 export CGO_ENABLED=0
-export CGO_CPPFLAGS=-I/usr/include/mozjs-24
+export CGO_CPPFLAGS=-std=c++0x -I/usr/include/mozjs-24
 
-build test: spidermonkey.cpp spidermonkey.h spidermonkey.swigcxx
-
-build:
-	go build
-
-test:
+test: spidermonkey.cpp spidermonkey.h spidermonkey.swigcxx
 	go test --ldflags '-extldflags "-lmozjs-24"'

@@ -1,5 +1,11 @@
 #include "spidermonkey.h"
 
+using std::bind;
+using std::function;
+using std::placeholders::_1;
+using std::placeholders::_2;
+using std::placeholders::_3;
+
 static JSClass globalClass = {
     "global",
     JSCLASS_GLOBAL_FLAGS,
@@ -33,31 +39,14 @@ JSRuntime* JS_NewRuntime()
     return JS_NewRuntime(8L * 1024 * 1024, JS_NO_HELPER_THREADS);
 }
 
-void reportError(JSContext *cx, const char *message, JSErrorReport *report)
-{
-    JSString *jsStackTrace = nullptr;
-    jsval v;
-
-    fprintf(stderr, "File: %s Line: %u Message: %s\n", report->filename ? report->filename : "[no filename]", (unsigned int) report->lineno, message);
-
-    if (JSREPORT_IS_EXCEPTION(report->flags) && JS_GetPendingException(cx, &v)) {
-        JS_ClearPendingException(cx);
-
-        JS_GetProperty(cx, JSVAL_TO_OBJECT(v), "stack", &v);
-        jsStackTrace = JS_ValueToString(cx, v);
-    }
-    if (jsStackTrace) {
-        fprintf(stderr, "Stack: %s\n", JS_EncodeString(cx, jsStackTrace));
-    }
-}
-
 Result* GetFooResult(JSContext *cx, const char *script)
 {
     const char *filename;
     int lineno;
     JSScript *compiledScript;
+    Result *result = new Result(nullptr, nullptr);
 
-    JS_SetErrorReporter(cx, reportError);
+    result->BeErrorReporter(cx);
 
     JS::RootedObject global(cx, JS_NewGlobalObject(cx, &globalClass, nullptr));
     JS::RootedValue rval(cx);
@@ -71,15 +60,9 @@ Result* GetFooResult(JSContext *cx, const char *script)
     lineno = 1;
     compiledScript = JS_CompileScript(cx, global, script, strlen(script), filename, lineno);
 
-    if (!compiledScript) {
-        // JS_ReportError(cx, "compile error :(");
-
-        return new Result(nullptr, nullptr);
+    if (compiledScript && JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
+        result->SetValue(JS_EncodeString(cx, rval.toString()));
     }
 
-    if (!JS_ExecuteScript(cx, global, compiledScript, rval.address())) {
-        return new Result(nullptr, nullptr);
-    }
-
-    return new Result(JS_EncodeString(cx, rval.toString()), nullptr);
+    return result;
 }
