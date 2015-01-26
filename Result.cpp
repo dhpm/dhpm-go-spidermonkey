@@ -11,19 +11,19 @@ Result::Result(const char *value, JSErrorReport *report)
     this->SetValue(value);
 }
 
-static function<void(JSContext*, const char*, JSErrorReport*)> Result::GetErrorReporter(JSContext *cx)
+static Result* Result::GetErrorReporter(JSContext *cx)
 {
     return Result::errorHandleMap[cx];
 }
 
-static void Result::SetErrorReporter(JSContext *cx, function<void(JSContext*, const char*, JSErrorReport*)> errorHandle)
+static void Result::SetErrorReporter(JSContext *cx, Result *result)
 {
-    Result::errorHandleMap[cx] = errorHandle;
+    Result::errorHandleMap[cx] = result;
 }
 
 JSErrorReporter Result::BeErrorReporter(JSContext *cx)
 {
-    Result::SetErrorReporter(cx, bind(&Result::HandleError, result, _1, _2, _3));
+    Result::SetErrorReporter(cx, this);
 
     return JS_SetErrorReporter(cx, handleError);
 }
