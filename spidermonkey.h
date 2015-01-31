@@ -1,7 +1,6 @@
 #ifndef DHPM_SPIDERMONKEY_H
 #define DHPM_SPIDERMONKEY_H
 
-#include <functional>
 #include <jsapi.h>
 
 #include "Result.h"

@@ -5,24 +5,27 @@
 #include <map>
 
 using std::map;
+using std::pair;
 
 class Result
 {
-    map<JSContext*, function<void(JSContext*, const char*, JSErrorReport*)>> errorHandleMap;
+    static map<JSContext*, Result*> errorHandleMap;
     const char *value;
     JSErrorReport *report;
 
 public:
+    static Result* GetErrorReporter(JSContext*);
+    static void SetErrorReporter(JSContext*, Result*);
+
     Result(const char *value, JSErrorReport *report);
 
-    const char* GetValue();
-    void SetValue(const char*);
-
+    JSErrorReporter BeErrorReporter(JSContext*);
     JSErrorReport* GetReport();
+    const char* GetValue();
+    void HandleError(JSContext*, const char*, JSErrorReport*);
     bool HasReport();
     void SetReport(JSErrorReport*);
-
-    void HandleError(JSContext*, const char*, JSErrorReport*);
+    void SetValue(const char*);
 };
 
 #endif

@@ -1,24 +1,26 @@
 #include "Result.h"
 
+map<JSContext*, Result*> Result::errorHandleMap;
+
 void handleError(JSContext *cx, const char *message, JSErrorReport *report)
 {
     Result::GetErrorReporter(cx)->HandleError(cx, message, report);
+}
+
+Result* Result::GetErrorReporter(JSContext *cx)
+{
+    return Result::errorHandleMap.find(cx)->second;
+}
+
+void Result::SetErrorReporter(JSContext *cx, Result *result)
+{
+    Result::errorHandleMap.insert(pair<JSContext*, Result*>(cx, result));
 }
 
 Result::Result(const char *value, JSErrorReport *report)
 {
     this->SetReport(report);
     this->SetValue(value);
-}
-
-static Result* Result::GetErrorReporter(JSContext *cx)
-{
-    return Result::errorHandleMap[cx];
-}
-
-static void Result::SetErrorReporter(JSContext *cx, Result *result)
-{
-    Result::errorHandleMap[cx] = result;
 }
 
 JSErrorReporter Result::BeErrorReporter(JSContext *cx)

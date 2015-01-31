@@ -1,11 +1,5 @@
 #include "spidermonkey.h"
 
-using std::bind;
-using std::function;
-using std::placeholders::_1;
-using std::placeholders::_2;
-using std::placeholders::_3;
-
 static JSClass globalClass = {
     "global",
     JSCLASS_GLOBAL_FLAGS,
