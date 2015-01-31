@@ -38,7 +38,7 @@ Result* GetFooResult(JSContext *cx, const char *script)
     const char *filename;
     int lineno;
     JSScript *compiledScript;
-    Result *result = new Result(nullptr, nullptr);
+    Result *result = new Result(nullptr);
 
     result->BeErrorReporter(cx);
 

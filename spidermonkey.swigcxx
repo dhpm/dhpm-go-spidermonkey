@@ -3,5 +3,6 @@
     #include "spidermonkey.h"
 %}
 
+%include "ErrorReport.h"
 %include "Result.h"
 %include "spidermonkey.h"
